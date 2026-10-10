@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Evita o loop se a requisição já for para a pasta public
+RewriteCond %{REQUEST_URI} !^/public/
+
+# Redireciona tudo para /public/index.php mantendo os parâmetros de URL
+RewriteRule ^(.*)$ /public/index.php [L,QSA]

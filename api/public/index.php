@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\AuthController;
 use App\Controllers\RequestController;
+use App\Middlewares\JwtAuthMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -25,9 +26,12 @@ $app->get('/', function (Request $request, Response $response) {
 $app->post('/login', [AuthController::class, 'login']);
 
 // Rotas protegidas por JWT
-$app->group('/api', function (RouteCollectorProxy $group) {
-    $group->get('/solicitacoes', [RequestController::class, 'index']);
-    $group->post('/solicitacoes', [RequestController::class, 'store']);
-});
+$app->group('/solicitacoes', function (RouteCollectorProxy $group) {
+    $group->get('/', [RequestController::class, 'index']);
+    $group->get('/{id}', [RequestController::class, 'show']);
+    $group->post('/cadastrar', [RequestController::class, 'store']);
+    $group->post('/update/{id}', [RequestController::class, 'update']);
+    $group->post('/delete/{id}', [RequestController::class, 'delete']);
+})->add(new JwtAuthMiddleware());
 
 $app->run();

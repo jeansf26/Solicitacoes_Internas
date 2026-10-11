@@ -40,8 +40,6 @@ class AuthController
                 'exp' => time() + (60 * 60 * 2), // 2 horas
                 'data' => [
                     'id' => $usuario['id'],
-                    'nome' => $usuario['nome'],
-                    'email' => $usuario['email']
                 ]
             ];
 

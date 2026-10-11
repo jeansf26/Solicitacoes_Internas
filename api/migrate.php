@@ -23,30 +23,31 @@ try {
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
     $pdo->exec("USE `$db`;");
 
-    // Tabela 1: solicitacao
+    // Tabela 2: Usuario
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS usuario (
+            id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+            nome VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            senha VARCHAR(255) NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ");
+
+    // Tabela 2: solicitacao
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS solicitacao (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             titulo VARCHAR(255) NOT NULL,
             descricao TEXT NOT NULL,
-            solicitante VARCHAR(255) NOT NULL,
             area_solicitante VARCHAR(255) NOT NULL,
             prioridade VARCHAR(255) NOT NULL,
             status VARCHAR(255) NOT NULL,
             comentario TEXT,
             data_solicitacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            data_atualizacao TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
-        );
-    ");
-
-    // Tabela 2: Usuario
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS usuario (
-            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            senha VARCHAR(255) NOT NULL,
-            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            data_atualizacao TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+            solicitante_id INT NOT NULL,
+            CONSTRAINT fk_solicitante FOREIGN KEY (solicitante_id) REFERENCES usuario(id) ON DELETE CASCADE
         );
     ");
 

@@ -11,6 +11,8 @@ import {
 } from '../../services/api';
 import SolicitacaoModal from './components/SolicitacaoModal';
 import FiltroModal from './components/FiltroModal';
+import toast from 'react-hot-toast';
+import ExclusaoModal from './components/ExclusaoModal';
 
 type DadosFormulario = {
   titulo: string;
@@ -54,21 +56,25 @@ const dadosVazios: DadosFormulario = {
 };
 
 export default function SolicitacoesPage() {
+  // Variaveis que definem os formularios abertos
+  const [formularioAberto, setFormularioAberto] = useState(false);
+  const [filtrosAberto, setFiltrosAberto] = useState(false);
+  const [exclusaoAberto, setExclusaoAberto] = useState(false);
+
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [dados, setDados] = useState<DadosFormulario>(dadosVazios);
   const [filtro, setFiltro] = useState<Filtros>(filtroVazio);
-  const [idEditando, setIdEditando] = useState<number | null>(null);
-  const [formularioAberto, setFormularioAberto] = useState(false);
-  const [filtrosAberto, setFiltrosAberto] = useState(false);
   const [modo, setModo] = useState('');
+
+  const [idEditando, setIdEditando] = useState<number | null>(null);
+  const [idExcluindo, setIdExcluindo] = useState<number | null>(null);
+
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState('');
   const router = useRouter();
 
   async function carregarSolicitacoes() {
     try {
       setCarregando(true);
-      setErro('');
 
       // Monta os parâmetros de URL apenas com o que for relevante
       const params = new URLSearchParams();
@@ -91,11 +97,7 @@ export default function SolicitacoesPage() {
         }))
       );
     } catch (error) {
-      setErro(
-        error instanceof Error
-          ? error.message
-          : 'Não foi possível carregar as solicitações.'
-      );
+      toast.error('Não foi possível carregar as solicitações.');
     } finally {
       setCarregando(false);
     }
@@ -109,7 +111,7 @@ export default function SolicitacoesPage() {
   }
 
   useEffect(() => {
-    if (!localStorage.getItem('token')) {
+    if (!sessionStorage.getItem('token')) {
       router.replace('/login');
     }
     const timer = window.setTimeout(carregarSolicitacoes, 0);
@@ -175,26 +177,28 @@ export default function SolicitacoesPage() {
       setFormularioAberto(false);
       carregarSolicitacoes();
     } catch (error) {
-      setErro(
-        error instanceof Error
-          ? error.message
-          : 'Não foi possível salvar a solicitação.'
-      );
+      toast.error('Não foi possível salvar a solicitação.');
     }
   }
 
-  async function excluir(id: number) {
-    if (!window.confirm('Deseja excluir esta solicitação?')) return;
+  // Apenas abre o modal e guarda o ID do item selecionado
+  function solicitarExclusao(id: number) {
+    setIdExcluindo(id);
+    setExclusaoAberto(true);
+  }
+
+  // Executa a exclusão de fato quando confirmado no modal
+  async function confirmarExclusao() {
+    if (idExcluindo === null) return;
 
     try {
-      await solicitacaoDeleteRequest(id);
+      await solicitacaoDeleteRequest(idExcluindo);
+      toast.success('Solicitação excluída com sucesso!');
+      setExclusaoAberto(false);
+      setIdExcluindo(null);
       carregarSolicitacoes();
     } catch (error) {
-      setErro(
-        error instanceof Error
-          ? error.message
-          : 'Não foi possível excluir a solicitação.'
-      );
+      toast.error('Não foi possível excluir a solicitação.');
     }
   }
 
@@ -216,12 +220,6 @@ export default function SolicitacoesPage() {
           Nova solicitação
         </button>
       </div>
-
-      {erro && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {erro}
-        </div>
-      )}
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
@@ -268,7 +266,7 @@ export default function SolicitacoesPage() {
                       <Edit size={21} />
                     </button>
                     <button
-                      onClick={() => excluir(solicitacao.id)}
+                      onClick={() => solicitarExclusao(solicitacao.id)}
                       className="rounded p-2 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 size={21} />
@@ -310,6 +308,11 @@ export default function SolicitacoesPage() {
         setFiltro={setFiltro}
         aoFechar={() => setFiltrosAberto(false)}
         aoSalvar={aplicarFiltros}
+      />
+      <ExclusaoModal
+        aberto={exclusaoAberto}
+        aoFechar={() => setExclusaoAberto(false)}
+        aoSalvar={confirmarExclusao}
       />
     </section>
   );

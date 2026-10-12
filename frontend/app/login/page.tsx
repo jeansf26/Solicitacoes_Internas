@@ -3,31 +3,30 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginRequest } from '../services/api';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
   
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErro('');
     setCarregando(true);
 
     try {
       // Chama a função centralizada da API
       const data = await loginRequest(email, senha);
 
-      // Salva o token JWT no localStorage do navegador
-      localStorage.setItem('token', data.token);
+      // Salva o token JWT no sessionStorage do navegador
+      sessionStorage.setItem('token', data.token);
 
       // Redireciona para a página principal ou de solicitações
       router.push('/interno');
     } catch (err: any) {
-      setErro(err.message);
+      toast.error(err.message);
     } finally {
       setCarregando(false);
     }
@@ -37,12 +36,6 @@ export default function LoginPage() {
     <div className="flex flex-1 items-center justify-center p-4">
       <div className="w-full max-w-md rounded-2xl bg-white/95 backdrop-blur p-8 shadow-2xl border border-white/10 text-slate-800">
         <h1 className="mb-6 text-center text-2xl font-bold text-emerald-950">Sistema de Solicitações</h1>
-
-        {erro && (
-          <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700 text-center">
-            {erro}
-          </div>
-        )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>

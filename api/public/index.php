@@ -17,6 +17,19 @@ $app->addBodyParsingMiddleware(); // Permite que o Slim leia o corpo das requisi
 $app->addRoutingMiddleware(); // Permite que o Slim gerencie as rotas
 $app->addErrorMiddleware(true, true, true); // Ativa o middleware de tratamento de erros para desenvolvimento
 
+// Permitindo requisições do frontend
+$app->add(function ($request, $handler) {
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, body')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+});
+
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
 $app->get('/', function (Request $request, Response $response) {
     $response->getBody()->write("API de Solicitações rodando!");
     return $response;

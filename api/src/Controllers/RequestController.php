@@ -10,10 +10,49 @@ class RequestController
     public function index(Request $request, Response $response, array $args): Response
     {
         $pdo = require __DIR__ . '/../../config/conexao.php';
+        
+        // Captura correta dos parâmetros de filtro
+        $params = $request->getQueryParams();
+        $titulo = $params['titulo'] ?? null;
+        $prioridade = $params['prioridade'] ?? null;
+        $status = $params['status'] ?? null;
+        $ordem = (isset($params['ordem']) && strtoupper($params['ordem']) === 'DESC') ? 'DESC' : 'ASC';
 
-        $sql = "SELECT * FROM solicitacao";
+        $where = "WHERE s.id > -1";
+        $binds = [];
+
+        if (!empty($titulo)) {
+            $where .= " AND s.titulo LIKE ?";
+            $binds[] = "%" . $titulo . "%";
+        }
+        if (!empty($prioridade)) {
+            $where .= " AND s.prioridade = ?";
+            $binds[] = $prioridade;
+        }
+        if (!empty($status)) {
+            $where .= " AND s.status = ?";
+            $binds[] = $status;
+        }
+
+        $sql = "SELECT 
+                s.id,
+                s.titulo,
+                s.descricao,
+                s.area_solicitante,
+                s.prioridade,
+                s.status,
+                s.comentario,
+                s.data_solicitacao,
+                s.data_atualizacao,
+                u.nome as nome_solicitante
+                FROM solicitacao as s
+                INNER JOIN usuario AS u ON u.id = s.solicitante_id 
+                " . $where . " 
+                ORDER BY s.data_solicitacao " . $ordem;
+
         $stmt = $pdo->prepare($sql);
-        $stmt->execute();
+        // Executa passando o array de valores correspondentes aos '?' da query
+        $stmt->execute($binds);
         $solicitacoes = $stmt->fetchAll();
 
         $payload = json_encode($solicitacoes);

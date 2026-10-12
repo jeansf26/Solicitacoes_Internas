@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  /* Tema Verde Profissional (Modo Claro) */
+  --background: #f0fdf4;       /* Verde bem clarinho e suave para o fundo (Emerald 50) */
+  --foreground: #064e3b;       /* Texto escuro em tom de verde floresta (Emerald 900) */
+  --primary: #151616;          /* Verde principal para botões e destaques (Emerald 600) */
+  --primary-hover: #047857;    /* Verde mais escuro ao passar o mouse (Emerald 700) */
+  --card-bg: #ffffff;          /* Fundo branco para cards e formulários */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-card: var(--card-bg);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

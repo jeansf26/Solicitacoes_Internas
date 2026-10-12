@@ -2,15 +2,19 @@
 api/vendor/
 
 # Environment variables and local configuration
-api/.env
-api/.env.*
-!api/.env.example
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
 
 # Logs, caches and temporary files
 *.log
 api/logs/
 api/cache/
 api/tmp/
+.phpunit.cache/
+.phpunit.result.cache
 
 # IDE and editor settings
 .idea/

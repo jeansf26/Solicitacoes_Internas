@@ -85,10 +85,16 @@ Para executar o projeto localmente:
 
 ## 🚀 Instruções de Configuração e Execução
 
-### 1. Banco de Dados e Migrations
 
-1. Garanta que o serviço do MySQL esteja ativo.
-2. Acesse o diretório `api/` e verifique o arquivo `.env.example` e renomeie para `.env`:
+### 1. Back-end e Banco de dados (API PHP)
+
+1. No diretório `api/`, instale as dependências via Composer:
+   ```bash
+   cd api
+   composer install
+   ```
+2. Garanta que o serviço do MySQL esteja ativo.
+3. Acesse o diretório `api/` e verifique o arquivo `.env.example` e renomeie para `.env`:
    ```env
    DB_HOST='127.0.0.1'
    DB_PORT='3306'
@@ -99,23 +105,13 @@ Para executar o projeto localmente:
    ```
    *(Ajuste o usuário e senha do MySQL caso seu ambiente local exija).*
 
-3. Execute o script de criação do banco de dados, tabelas e dados iniciais (seeds):
+4. Execute o script de criação do banco de dados, tabelas e dados iniciais (seeds):
    ```bash
-   cd api
    php migrate.php
    ```
    > Esse script cria o database `SolicitacoesInternas`, as tabelas `usuario` e `solicitacao` com chave estrangeira e insere 2 usuários e solicitações iniciais para demonstração.
-
----
-
-### 2. Back-end (API PHP)
-
-1. No diretório `api/`, instale as dependências via Composer:
-   ```bash
-   cd api
-   composer install
-   ```
-2. Inicie o servidor embutido do PHP apontando para a pasta `public`:
+   
+5. Inicie o servidor embutido do PHP apontando para a pasta `public`:
    ```bash
    php -S localhost:80 -t public
    ```
@@ -125,7 +121,7 @@ Para executar o projeto localmente:
 
 ---
 
-### 3. Front-end (Next.js)
+### 2. Front-end (Next.js)
 
 1. Em um novo terminal, acesse a pasta `frontend/`:
    ```bash

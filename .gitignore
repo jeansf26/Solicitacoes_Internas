@@ -7,6 +7,7 @@ api/vendor/
 **/.env
 **/.env.*
 !**/.env.example
+!**/.env.local
 
 # Logs, caches and temporary files
 *.log

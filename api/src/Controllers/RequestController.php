@@ -51,7 +51,6 @@ class RequestController
                 ORDER BY s.data_solicitacao " . $ordem;
 
         $stmt = $pdo->prepare($sql);
-        // Executa passando o array de valores correspondentes aos '?' da query
         $stmt->execute($binds);
         $solicitacoes = $stmt->fetchAll();
 
@@ -178,7 +177,7 @@ class RequestController
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
-
+    
     public function delete(Request $request, Response $response, array $args): Response
     {
         $pdo = require __DIR__ . '/../../config/conexao.php';
@@ -196,10 +195,12 @@ class RequestController
             ->withStatus(200);
     }
 
+    // função que retorna as métricas para o dashboard
     public function dashboard(Request $request, Response $response, array $args): Response
     {
         $pdo = require __DIR__ . '/../../config/conexao.php';
 
+        // conta o total de solicitações
         $sql_total = "SELECT COUNT(*) AS quantidade_total 
                 FROM solicitacao;";
         $stmt_total = $pdo->prepare($sql_total);

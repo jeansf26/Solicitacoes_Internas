@@ -1,3 +1,5 @@
+// Componente responsável por modal de exclusão de solicitações
+
 import { FormEvent } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
@@ -34,15 +36,15 @@ export default function ExclusaoModal({ aberto, aoFechar, aoSalvar }: ExclusaoMo
         </div>
 
         <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-4">
-          <button 
-            type="button" 
-            onClick={aoFechar} 
+          <button
+            type="button"
+            onClick={aoFechar}
             className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
           >
             Cancelar
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 transition"
           >
             Sim, excluir

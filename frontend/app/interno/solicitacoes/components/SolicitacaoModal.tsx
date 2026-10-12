@@ -1,5 +1,8 @@
+// Componente responsavel pelo modal de resposta de solicitaçãop e cadastro
+
 import { FormEvent } from 'react';
 import { X } from 'lucide-react';
+import { formatarData } from '../../../services/date';
 
 type DadosFormulario = {
   titulo: string;
@@ -8,7 +11,7 @@ type DadosFormulario = {
   prioridade: string;
   status: string;
   comentario: string;
-  data_atualizacao : Date | null;
+  data_atualizacao: Date | null;
 };
 
 type SolicitacaoModalProps = {
@@ -45,61 +48,61 @@ export default function SolicitacaoModal({
         <div className="grid gap-4 p-5 sm:grid-cols-2">
           {modo != "cadastro" ? (
             modo == "fechado" ? (
-            <>
-              <div className="sm:col-span-2">
-                <span className="text-sm font-medium text-slate-700">Data de resposta: </span>
-                <input
-                  disabled
-                  value={dados.data_atualizacao?.toString()}
-                  className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
-                />
-              </div>
+              <>
+                <div className="sm:col-span-2">
+                  <span className="text-sm font-medium text-slate-700">Data de resposta: </span>
+                  <input
+                    disabled
+                    value={formatarData(dados.data_atualizacao)}
+                    className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+                  />
+                </div>
 
-              <div>
-                <span className="text-sm font-medium text-slate-700">Status da Resposta</span>
-                <input
-                  disabled
-                  value={dados.status}
-                  className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-600 cursor-not-allowed font-medium"
-                />
-              </div>
+                <div>
+                  <span className="text-sm font-medium text-slate-700">Status da Resposta</span>
+                  <input
+                    disabled
+                    value={dados.status}
+                    className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-600 cursor-not-allowed font-medium"
+                  />
+                </div>
 
-              <div className="sm:col-span-2">
-                <span className="text-sm font-medium text-slate-700">Comentário</span>
-                <textarea
-                  disabled
-                  value={dados.comentario || 'Nenhum comentário registrado.'}
-                  rows={4}
-                  className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-600 cursor-not-allowed"
-                />
-              </div>
-            </>
+                <div className="sm:col-span-2">
+                  <span className="text-sm font-medium text-slate-700">Comentário</span>
+                  <textarea
+                    disabled
+                    value={dados.comentario || 'Nenhum comentário registrado.'}
+                    rows={4}
+                    className="mt-1 block w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-600 cursor-not-allowed"
+                  />
+                </div>
+              </>
             ) : (
-            <>
-              <div>
-                <span className="text-sm font-medium text-slate-700">Status da Resposta</span>
-                <select
-                  value={dados.status}
-                  onChange={(e) => setDados({ ...dados, status: e.target.value })}
-                  className="mt-1 block w-full rounded border border-slate-300 px-3 py-2 text-sm"
-                >
-                  <option value="Em definição">Em definição</option>
-                  <option value="Aprovada">Aprovada</option>
-                  <option value="Reprovada">Reprovada</option>
-                </select>
-              </div>
+              <>
+                <div>
+                  <span className="text-sm font-medium text-slate-700">Status da Resposta</span>
+                  <select
+                    value={dados.status}
+                    onChange={(e) => setDados({ ...dados, status: e.target.value })}
+                    className="mt-1 block w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  >
+                    <option value="Em Análise">Em Análise</option>
+                    <option value="Aprovada">Aprovada</option>
+                    <option value="Rejeitada">Rejeitada</option>
+                  </select>
+                </div>
 
-              <div className="sm:col-span-2">
-                <span className="text-sm font-medium text-slate-700">Comentário</span>
-                <textarea
-                  value={dados.comentario}
-                  onChange={(e) => setDados({ ...dados, comentario: e.target.value })}
-                  rows={4}
-                  placeholder="Adicione um comentário ou justificativa..."
-                  className="mt-1 block w-full rounded border border-slate-300 px-3 py-2 text-sm"
-                />
-              </div>
-            </>
+                <div className="sm:col-span-2">
+                  <span className="text-sm font-medium text-slate-700">Comentário</span>
+                  <textarea
+                    value={dados.comentario}
+                    onChange={(e) => setDados({ ...dados, comentario: e.target.value })}
+                    rows={4}
+                    placeholder="Adicione um comentário ou justificativa..."
+                    className="mt-1 block w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                  />
+                </div>
+              </>
             )
           ) : (
             <>

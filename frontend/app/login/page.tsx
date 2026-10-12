@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginRequest } from '../services/api';
+import { setCookie } from '../services/cookies';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
-  
+
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -20,10 +21,10 @@ export default function LoginPage() {
       // Chama a função centralizada da API
       const data = await loginRequest(email, senha);
 
-      // Salva o token JWT no sessionStorage do navegador
-      sessionStorage.setItem('token', data.token);
+      // Salva o token JWT em cookie com validade de 2 horas
+      setCookie('token', data.token, 2);
 
-      // Redireciona para a página principal ou de solicitações
+      // Redireciona para a página de dashboard interna
       router.push('/interno');
     } catch (err: any) {
       toast.error(err.message);

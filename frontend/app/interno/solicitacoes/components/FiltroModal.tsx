@@ -1,3 +1,5 @@
+// componente responsavel pelo modal de filtro de solicitações
+
 import { FormEvent } from 'react';
 import { X } from 'lucide-react';
 
@@ -76,9 +78,9 @@ export default function FiltroModal({
             >
               <option value="">Todos</option>
               <option value="Aberta">Aberta</option>
-              <option value="Em definição">Em definição</option>
+              <option value="Em Análise">Em Análise</option>
               <option value="Aprovada">Aprovada</option>
-              <option value="Reprovada">Reprovada</option>
+              <option value="Rejeitada">Rejeitada</option>
             </select>
           </div>
 

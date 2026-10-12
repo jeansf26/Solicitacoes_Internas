@@ -10,8 +10,8 @@ import {
   LogOut,
   Leaf,
   ChevronRight,
-  CircleHelp,
 } from 'lucide-react';
+import { deleteCookie } from '../services/cookies';
 
 export default function InternoLayout({
   children,
@@ -22,7 +22,7 @@ export default function InternoLayout({
   const pathname = usePathname();
 
   const handleLogout = () => {
-    sessionStorage.removeItem('token');
+    deleteCookie('token');
     router.push('/login');
   };
 
@@ -47,7 +47,6 @@ export default function InternoLayout({
         justify-between border-r border-slate-200 bg-slate-50/80 p-5">
 
         <div>
-          {/* Identidade visual */}
           <div className="flex items-center gap-3 px-2 pb-7 pt-2">
             <div className="flex h-11 w-11 items-center justify-center
               rounded-xl bg-emerald-700 text-white shadow-sm
@@ -83,10 +82,9 @@ export default function InternoLayout({
                   href={item.href}
                   className={`group flex items-center gap-3
                     rounded-xl px-3 py-3 text-sm font-medium
-                    transition-all duration-200 ${
-                      isActive
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
+                    transition-all duration-200 ${isActive
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
                     }`}
                 >
                   <Icon

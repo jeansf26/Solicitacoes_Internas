@@ -1,4 +1,4 @@
-import { get } from "http";
+import { getCookie, setCookie, deleteCookie } from './cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -26,7 +26,7 @@ export async function loginRequest(email: string, senha: string) {
 
 export async function solicitacaoRequest(params: string = '') {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     // Concatena os parâmetros de filtro na URL se eles existirem
     const url = params ? `${API_URL}/solicitacoes/?${params}` : `${API_URL}/solicitacoes/`;
@@ -51,15 +51,15 @@ export async function solicitacaoRequest(params: string = '') {
   }
 }
 
-export async function solicitacaoIndividualRequest(id : Number) {
+export async function solicitacaoIndividualRequest(id: Number) {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     const response = await fetch(`${API_URL}/solicitacoes/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ token,
+        'Authorization': 'Bearer ' + token,
       },
     });
 
@@ -75,9 +75,9 @@ export async function solicitacaoIndividualRequest(id : Number) {
   }
 }
 
-export async function solicitacaoCadastroRequest(titulo: String, descricao: String, area: String, prioridade: String, status: String, comentario: String ) {
+export async function solicitacaoCadastroRequest(titulo: String, descricao: String, area: String, prioridade: String, status: String, comentario: String) {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     const response = await fetch(`${API_URL}/solicitacoes/cadastrar`, {
       method: 'POST',
@@ -101,15 +101,15 @@ export async function solicitacaoCadastroRequest(titulo: String, descricao: Stri
   }
 }
 
-export async function solicitacaoUpdateRequest(id : Number, titulo: String, descricao: String, area: String, prioridade: String, status: String, comentario: String ) {
+export async function solicitacaoUpdateRequest(id: Number, titulo: String, descricao: String, area: String, prioridade: String, status: String, comentario: String) {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     const response = await fetch(`${API_URL}/solicitacoes/update/${id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ token,
+        'Authorization': 'Bearer ' + token,
       },
       body: JSON.stringify({ titulo, descricao, area, prioridade, status, comentario }),
     });
@@ -126,15 +126,15 @@ export async function solicitacaoUpdateRequest(id : Number, titulo: String, desc
   }
 }
 
-export async function solicitacaoDeleteRequest(id : Number) {
+export async function solicitacaoDeleteRequest(id: Number) {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     const response = await fetch(`${API_URL}/solicitacoes/delete/${id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ token,
+        'Authorization': 'Bearer ' + token,
       },
     });
 
@@ -152,7 +152,7 @@ export async function solicitacaoDeleteRequest(id : Number) {
 
 export async function dashboardRequest() {
   try {
-    const token = sessionStorage.getItem('token');
+    const token = getCookie('token');
 
     const response = await fetch(`${API_URL}/solicitacoes/dashboard`, {
       method: 'GET',
@@ -173,3 +173,5 @@ export async function dashboardRequest() {
     throw new Error(error.message || 'Erro de conexão com o servidor');
   }
 }
+
+export { getCookie, setCookie, deleteCookie };

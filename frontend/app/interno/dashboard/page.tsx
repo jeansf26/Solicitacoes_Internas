@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BarChart3, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { dashboardRequest } from '../../services/api'; // Ajuste o caminho relativo conforme sua estrutura de pastas
+import { dashboardRequest } from '../../services/api';
+import { getCookie } from '../../services/cookies';
 import toast from 'react-hot-toast';
 
+// Tipos criados para organizar as métricas de status e prioridade
 type StatusItem = {
   status: string;
   quantidade_status: number;
@@ -23,10 +25,11 @@ type DashboardData = {
 };
 
 export default function DashboardPage() {
-  const [dados, setDados] = useState<DashboardData | null>(null);
-  const [carregando, setCarregando] = useState(true);
-  const router = useRouter();
+  const [dados, setDados] = useState<DashboardData | null>(null); //variavel que guarda as métricas
+  const [carregando, setCarregando] = useState(true); //variavel que controla o carregamento
+  const router = useRouter(); //hook do next que controla a rota
 
+  // função que carrega as métricas da API
   async function carregarDashboard() {
     try {
       setCarregando(true);
@@ -39,8 +42,10 @@ export default function DashboardPage() {
     }
   }
 
+  // função do next que controla o carregamento (roda ao criar a página)
+  // se o usuário não estiver logado, redireciona para a página de login
   useEffect(() => {
-    if (!sessionStorage.getItem('token')) {
+    if (!getCookie('token')) {
       router.replace('/login');
       return;
     }

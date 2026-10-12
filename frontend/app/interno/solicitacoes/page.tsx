@@ -9,6 +9,8 @@ import {
   solicitacaoRequest,
   solicitacaoUpdateRequest,
 } from '../../services/api';
+import { getCookie } from '../../services/cookies';
+import { formatarData } from '../../services/date';
 import SolicitacaoModal from './components/SolicitacaoModal';
 import FiltroModal from './components/FiltroModal';
 import toast from 'react-hot-toast';
@@ -61,17 +63,23 @@ export default function SolicitacoesPage() {
   const [filtrosAberto, setFiltrosAberto] = useState(false);
   const [exclusaoAberto, setExclusaoAberto] = useState(false);
 
+  // variaveis que controlam o estado das solicitações
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [dados, setDados] = useState<DadosFormulario>(dadosVazios);
   const [filtro, setFiltro] = useState<Filtros>(filtroVazio);
   const [modo, setModo] = useState('');
 
+  // variaveis que controlam os ids que estão sendo editados ou excluídos
   const [idEditando, setIdEditando] = useState<number | null>(null);
   const [idExcluindo, setIdExcluindo] = useState<number | null>(null);
 
+  // variavel que controla o carregamento
   const [carregando, setCarregando] = useState(true);
+
+  // hook do next que controla a rota
   const router = useRouter();
 
+  // função que carrega as solicitações da API
   async function carregarSolicitacoes() {
     try {
       setCarregando(true);
@@ -103,36 +111,37 @@ export default function SolicitacoesPage() {
     }
   }
 
-  // Função disparada ao aplicar os filtros no modal
+  // Função disparada ao aplicar os filtros no modal - recebe os dados do modal, fecha o modal e recarrega as solicitações com os filtros aplicados
   async function aplicarFiltros(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     setFiltrosAberto(false);
     await carregarSolicitacoes();
   }
 
+  // função do next que controla o carregamento (roda ao criar a página) - só carrega as solicitações quando o usuário estiver logado
   useEffect(() => {
-    if (!sessionStorage.getItem('token')) {
+    if (!getCookie('token')) {
       router.replace('/login');
     }
     const timer = window.setTimeout(carregarSolicitacoes, 0);
     return () => window.clearTimeout(timer);
   }, []);
 
+  // Funções que abrem os modais 
   function abrirCadastro() {
-    if(!filtrosAberto){
-        setDados(dadosVazios);
-        setIdEditando(null);
-        setModo('cadastro');
-        setFormularioAberto(true);   
+    if (!filtrosAberto) {
+      setDados(dadosVazios);
+      setIdEditando(null);
+      setModo('cadastro');
+      setFormularioAberto(true);
     }
   }
 
   function abrirFiltro() {
-    if(!formularioAberto){
-        setFiltrosAberto(true);
+    if (!formularioAberto) {
+      setFiltrosAberto(true);
     }
   }
-  
   function abrirResposta(solicitacao: Solicitacao) {
     setDados({
       titulo: solicitacao.titulo,
@@ -145,10 +154,15 @@ export default function SolicitacoesPage() {
     });
 
     setIdEditando(solicitacao.id);
-    setModo(solicitacao.status == "Aprovada" || solicitacao.status == "Reprovada" ? "fechado" : "editar");
+    setModo(solicitacao.status == "Aprovada" || solicitacao.status == "Rejeitada" ? "fechado" : "editar");
     setFormularioAberto(true);
   }
+  function solicitarExclusao(id: number) {
+    setIdExcluindo(id);
+    setExclusaoAberto(true);
+  }
 
+  // função que salva as alterações feitas no modal
   async function salvar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
 
@@ -179,12 +193,6 @@ export default function SolicitacoesPage() {
     } catch (error) {
       toast.error('Não foi possível salvar a solicitação.');
     }
-  }
-
-  // Apenas abre o modal e guarda o ID do item selecionado
-  function solicitarExclusao(id: number) {
-    setIdExcluindo(id);
-    setExclusaoAberto(true);
   }
 
   // Executa a exclusão de fato quando confirmado no modal
@@ -225,12 +233,12 @@ export default function SolicitacoesPage() {
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <strong>Solicitações cadastradas</strong>
           <button
-          onClick={abrirFiltro}
-          className="flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
-        >
-          <Funnel size={18} />
-          Filtrar
-        </button>
+            onClick={abrirFiltro}
+            className="flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+          >
+            <Funnel size={18} />
+            Filtrar
+          </button>
         </div>
 
         {carregando && (
@@ -250,7 +258,7 @@ export default function SolicitacoesPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h3 className="font-semibold text-slate-800">
-                      {solicitacao.titulo} - {solicitacao.data_solicitacao.toString()}
+                      {solicitacao.titulo} - {formatarData(solicitacao.data_solicitacao)}
                     </h3>
                     <p className="mt-1 text-sm text-slate-600">
                       {solicitacao.descricao}

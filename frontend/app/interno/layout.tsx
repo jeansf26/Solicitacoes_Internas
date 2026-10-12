@@ -22,7 +22,7 @@ export default function InternoLayout({
   const pathname = usePathname();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     router.push('/login');
   };
 

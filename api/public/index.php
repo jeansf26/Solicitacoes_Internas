@@ -41,6 +41,7 @@ $app->post('/login', [AuthController::class, 'login']);
 // Rotas protegidas por JWT
 $app->group('/solicitacoes', function (RouteCollectorProxy $group) {
     $group->get('/', [RequestController::class, 'index']);
+    $group->get('/dashboard', [RequestController::class, 'dashboard']);
     $group->get('/{id}', [RequestController::class, 'show']);
     $group->post('/cadastrar', [RequestController::class, 'store']);
     $group->post('/update/{id}', [RequestController::class, 'update']);

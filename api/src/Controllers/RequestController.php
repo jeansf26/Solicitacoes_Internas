@@ -195,4 +195,42 @@ class RequestController
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
+
+    public function dashboard(Request $request, Response $response, array $args): Response
+    {
+        $pdo = require __DIR__ . '/../../config/conexao.php';
+
+        $sql_total = "SELECT COUNT(*) AS quantidade_total 
+                FROM solicitacao;";
+        $stmt_total = $pdo->prepare($sql_total);
+        $stmt_total->execute();
+        $total_quant = $stmt_total->fetch();
+
+        $sql_status = "SELECT status, COUNT(*) AS quantidade_status 
+                FROM solicitacao 
+                GROUP BY status";
+        $stmt_status = $pdo->prepare($sql_status);
+        $stmt_status->execute();
+        $status_quant = $stmt_status->fetchAll();
+
+        $sql_prioridade = "SELECT prioridade, COUNT(*) AS quantidade_prioridade 
+                FROM solicitacao 
+                GROUP BY prioridade";
+        $stmt_prioridade = $pdo->prepare($sql_prioridade);
+        $stmt_prioridade->execute();
+        $prioridade_quant = $stmt_prioridade->fetchAll();
+
+        $dadosDashboard = [
+            'total' => $total_quant['quantidade_total'] ?? 0,
+            'por_status' => $status_quant,
+            'por_prioridade' => $prioridade_quant
+        ];
+
+        $payload = json_encode($dadosDashboard);
+        $response->getBody()->write($payload);
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
 }
